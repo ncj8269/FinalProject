@@ -15,6 +15,48 @@ const handlePic = (e) => {
     return false;
 };
 
+const API_KEY = "24452997-a92d3065d5570184056e038c1";
+
+const searchPic = (e) => {
+    e.preventDefault();
+
+    $("#clippyMessage").animate({width:'hide'},350);
+
+    if($("#picSearch").val() == '') {
+        handleError("All fields are required");
+        return false;
+    }
+
+    $.ajax({
+        cache: false,
+        type: "GET",
+        url: `https://pixabay.com/api/?key=${API_KEY}&q=${document.querySelector("#picSearch").value}&image_type=photo`,
+        dataType: "json",
+        success: function (data) {
+            console.log(data);
+        },
+        error: function error(xhr, status, _error) {
+          var messageObj = JSON.parse(xhr.responseText);
+          handleError(messageObj.error);
+        }
+      });
+
+    return false;
+};
+
+const SearchForm = (props) => {
+    return (
+      <form id="imageSearchForm"
+            name ="searchForm"
+            onSubmit={searchPic}
+            className="searchForm">
+        <label htmlFor="search">Image Name</label>
+        <input id="picSearch" type="text" name="search"  placeholder="Flower"/>
+        <input type="submit" className="btn" id="search-button" value="Search"/>
+    </form>
+    );
+};
+
 const PictureForm = (props) => {
     return (
         <form id="pictureForm"
@@ -37,7 +79,7 @@ const PictureForm = (props) => {
 };
 
 const PicList = function(props) {
-    if(props.domos.length === 0) {
+    if(props.pics.length === 0) {
         return (
             <div className="picList">
                 <h3 className="emptyPic">No Pictures yet</h3>
@@ -45,7 +87,7 @@ const PicList = function(props) {
         );
     }
 
-    const picNodes = props.domos.map(function(pic) {
+    const picNodes = props.pics.map(function(pic) {
         return (
             <div key={pic._id} className="pic">
                 <img src="/assets/img/tempImg.jpeg" alt="Temp Img" className="tempImg" />
@@ -64,9 +106,9 @@ const PicList = function(props) {
 };
 
 const loadPicsFromServer = () => {
-    sendAjax('GET', '/getDomos', null, (data) => {
+    sendAjax('GET', '/getPics', null, (data) => {
         ReactDOM.render(
-            <PicList domos={data.domos} />, document.querySelector("#domos")
+            <PicList pics={data.pics} />, document.querySelector("#pics")
         );
     });
 };
@@ -77,7 +119,11 @@ const setup = function(csrf) {
     );
 
     ReactDOM.render(
-        <PicList domos={[]} />, document.querySelector("#domos")
+        <SearchForm csrf={csrf} />, document.querySelector("#searchPic")
+    );
+
+    ReactDOM.render(
+        <PicList pics={[]} />, document.querySelector("#pics")
     );
 
     loadPicsFromServer();

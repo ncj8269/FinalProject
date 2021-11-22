@@ -9,7 +9,7 @@ const makerPage = (req, res) => {
       return res.status(400).json({ error: 'An error occured' });
     }
 
-    return res.render('app', { csrfToken: req.csrfToken(), domos: docs });
+    return res.render('app', { csrfToken: req.csrfToken(), pics: docs });
   });
 };
 
@@ -43,7 +43,7 @@ const makePic = (req, res) => {
   return picPromise;
 };
 
-const getDomos = (request, response) => {
+const getPics = (request, response) => {
   const req = request;
   const res = response;
 
@@ -53,10 +53,10 @@ const getDomos = (request, response) => {
       return res.status(400).json({ error: 'An error occured' });
     }
 
-    return res.json({ domos: docs });
+    return res.json({ pics: docs });
   });
 };
 
 module.exports.makerPage = makerPage;
-module.exports.getDomos = getDomos;
+module.exports.getPics = getPics;
 module.exports.make = makePic;

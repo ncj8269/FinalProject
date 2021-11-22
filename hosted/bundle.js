@@ -17,6 +17,57 @@ var handlePic = function handlePic(e) {
   return false;
 };
 
+const API_KEY = "24452997-a92d3065d5570184056e038c1";
+const searchPic = (e) => {
+  e.preventDefault();
+  $("#clippyMessage").animate({
+    width: 'hide'
+  }, 350);
+
+  if($("#picSearch").val() == '') {
+      handleError("All fields are required");
+      return false;
+  }
+
+  $.ajax({
+    cache: false,
+    type: "GET",
+    url: `https://pixabay.com/api/?key=${API_KEY}&q=${document.querySelector("#picSearch").value}&image_type=photo`,
+    dataType: "json",
+    success: function (data) {
+        console.log(data);
+    },
+    error: function error(xhr, status, _error) {
+      var messageObj = JSON.parse(xhr.responseText);
+      handleError(messageObj.error);
+    }
+  });
+
+  return false;
+};
+
+var SearchForm = function SearchForm(props) {
+  return /*#__PURE__*/React.createElement("form", {
+    id: "searchForm",
+    name: "searchForm",
+    onSubmit: searchPic,
+    className: "searchForm"
+  }, /*#__PURE__*/React.createElement("label", {
+    htmlFor: "search"
+  }, "Img Name: "), /*#__PURE__*/React.createElement("input", {
+    id: "picSearch",
+    type: "text",
+    name: "search",
+    placeholder: "Flower"
+  }), /*#__PURE__*/React.createElement("input", {
+    type: "submit",
+    className: "btn",
+    id: "search-button",
+    value: "search"
+  })
+  );
+};
+
 var PictureForm = function PictureForm(props) {
   return /*#__PURE__*/React.createElement("form", {
     id: "pictureForm",
@@ -58,7 +109,7 @@ var PictureForm = function PictureForm(props) {
 };
 
 var PicList = function PicList(props) {
-  if (props.domos.length === 0) {
+  if (props.pics.length === 0) {
     return /*#__PURE__*/React.createElement("div", {
       className: "picList"
     }, /*#__PURE__*/React.createElement("h3", {
@@ -66,7 +117,7 @@ var PicList = function PicList(props) {
     }, "No Pictures yet"));
   }
 
-  var picNodes = props.domos.map(function (pic) {
+  var picNodes = props.pics.map(function (pic) {
     return /*#__PURE__*/React.createElement("div", {
       key: pic._id,
       className: "pic"
@@ -88,10 +139,10 @@ var PicList = function PicList(props) {
 };
 
 var loadPicsFromServer = function loadPicsFromServer() {
-  sendAjax('GET', '/getDomos', null, function (data) {
+  sendAjax('GET', '/getPics', null, function (data) {
     ReactDOM.render( /*#__PURE__*/React.createElement(PicList, {
-      domos: data.domos
-    }), document.querySelector("#domos"));
+      pics: data.pics
+    }), document.querySelector("#pics"));
   });
 };
 
@@ -99,9 +150,12 @@ var setup = function setup(csrf) {
   ReactDOM.render( /*#__PURE__*/React.createElement(PictureForm, {
     csrf: csrf
   }), document.querySelector("#savePic"));
+  ReactDOM.render( /*#__PURE__*/React.createElement(SearchForm, {
+    csrf: csrf
+  }), document.querySelector("#searchPic"));
   ReactDOM.render( /*#__PURE__*/React.createElement(PicList, {
-    domos: []
-  }), document.querySelector("#domos"));
+    pics: []
+  }), document.querySelector("#pics"));
   loadPicsFromServer();
 };
 
