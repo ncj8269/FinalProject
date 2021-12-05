@@ -1,0 +1,111 @@
+"use strict";
+
+var handlePurchace = function handlePurchace(e) {
+  e.preventDefault();
+  $("#clippyMessage").animate({
+    width: 'hide'
+  }, 350);
+
+  if ($("#user").val() == '' || $("#pass").val() == '') {
+    handleError("There is an empty field");
+    return false;
+  }
+
+  console.log($("input[name=_csrf]").val());
+  sendAjax('POST', $("#paymentForm").attr("action"), $("#paymentForm").serialize(), redirect);
+  return false;
+};
+
+
+var PaymentWindow = function PaymentWindow(props) {
+  return /*#__PURE__*/React.createElement("form", {
+    id: "paymentForm",
+    name: "paymentForm",
+    onSubmit: handlePurchace,
+    action: "/purchace",
+    method: "POST",
+    className: "mainForm"
+  }, /*#__PURE__*/React.createElement("label", {
+    htmlFor: "username"
+  }, "Username: "), /*#__PURE__*/React.createElement("input", {
+    id: "user",
+    type: "text",
+    name: "username",
+    placeholder: "username"
+  }), /*#__PURE__*/React.createElement("label", {
+    htmlFor: "pass"
+  }, "Password: "), /*#__PURE__*/React.createElement("input", {
+    id: "pass",
+    type: "password",
+    name: "pass",
+    placeholder: "password"
+  }), /*#__PURE__*/React.createElement("input", {
+    type: "hidden",
+    name: "_csrf",
+    value: props.csrf
+  }), /*#__PURE__*/React.createElement("input", {
+    className: "formSubmit",
+    type: "submit",
+    id: "purchaceSubmit",
+    value: "Confirm Purchace"
+  }));
+};
+
+
+var createPaymentWindow = function createPaymentWindow(csrf) {
+  ReactDOM.render( /*#__PURE__*/React.createElement(PaymentWindow, {
+    csrf: csrf
+  }), document.querySelector("#content"));
+};
+
+
+var setup = function setup(csrf) {
+  var purchaceButton = document.querySelector("#purchaceButton");
+
+  purchaceButton.addEventListener("click", function (e) {
+    e.preventDefault();
+    createPaymentWindow(csrf);
+    return false;
+  });
+  createPaymentWindow(csrf); //default view
+};
+
+var getToken = function getToken() {
+  sendAjax('GET', '/getToken', null, function (result) {
+    setup(result.csrfToken);
+  });
+};
+
+$(document).ready(function () {
+  getToken();
+});
+"use strict";
+
+var handleError = function handleError(message) {
+  $("#errorMessage").text(message);
+  $("#clippyMessage").animate({
+    width: 'toggle'
+  }, 350);
+};
+
+var redirect = function redirect(response) {
+  $("#clippyMessage").animate({
+    width: 'hide'
+  }, 350);
+  window.location = response.redirect;
+};
+
+var sendAjax = function sendAjax(type, action, data, success) {
+  $.ajax({
+    cache: false,
+    type: type,
+    url: action,
+    data: data,
+    dataType: "json",
+    success: success,
+    error: function error(xhr, status, _error) {
+      var messageObj = JSON.parse(xhr.responseText);
+      handleError(messageObj.error);
+    }
+  });
+};

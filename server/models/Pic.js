@@ -17,14 +17,14 @@ const PicSchema = new mongoose.Schema({
     set: setTitle,
   },
 
-  age: {
+  rating: {
     type: Number,
     min: 0,
     required: true,
   },
 
-  height: {
-    type: Number,
+  tags: {
+    type: String,
     min: 0,
     required: true,
   },
@@ -43,8 +43,8 @@ const PicSchema = new mongoose.Schema({
 
 PicSchema.statics.toAPI = (doc) => ({
   title: doc.title,
-  age: doc.age,
-  height: doc.height,
+  rating: doc.rating,
+  tags: doc.tags,
 });
 
 PicSchema.statics.findByOwner = (ownerId, callback) => {
@@ -52,7 +52,7 @@ PicSchema.statics.findByOwner = (ownerId, callback) => {
     owner: convertId(ownerId),
   };
 
-  return PicModel.find(search).select('title age height').lean().exec(callback);
+  return PicModel.find(search).select('title rating tags').lean().exec(callback);
 };
 
 PicModel = mongoose.model('Pic', PicSchema);

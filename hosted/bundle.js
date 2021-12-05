@@ -6,7 +6,7 @@ var handlePic = function handlePic(e) {
     width: 'hide'
   }, 350);
 
-  if ($("#picTitle").val() == '' || $("#picAge").val() == '' || $("#picHeight").val() == '') {
+  if ($("#picTitle").val() == '' || $("#picRating").val() == '' || $("#picTags").val() == '') {
     handleError("All fields are required");
     return false;
   }
@@ -18,6 +18,10 @@ var handlePic = function handlePic(e) {
 };
 
 const API_KEY = "24452997-a92d3065d5570184056e038c1";
+//arrays to hold pictures
+const picsToAddTemp = [];
+const picsToAddPerm = [];
+
 const searchPic = (e) => {
   e.preventDefault();
   $("#clippyMessage").animate({
@@ -35,8 +39,23 @@ const searchPic = (e) => {
     url: `https://pixabay.com/api/?key=${API_KEY}&q=${document.querySelector("#picSearch").value}&image_type=photo`,
     dataType: "json",
     success: function (data) {
-        console.log(data);
-    },
+      console.log(data);
+      for (var i = 0; i < data.hits.length; i++) {
+        console.log(data.hits[i].webformatURL);
+      }
+      //creates images
+      for (var i = 0; i < data.hits.length; i++) {
+          let picImage = $("<input type='image'>");
+          picImage.attr("class", "pic");
+          picImage.attr("src", data.hits[i].webformatURL);
+          //picImage.attr("id", response.hits[i].name);
+          //picImage.data(data.hits[i]);
+          $("#picList").append(picImage);
+          // picImage.click(function () {
+          //     picsToAdd[0] = picImage.data().webformatURL;
+          // });
+      }
+  },
     error: function error(xhr, status, _error) {
       var messageObj = JSON.parse(xhr.responseText);
       handleError(messageObj.error);
@@ -84,19 +103,19 @@ var PictureForm = function PictureForm(props) {
     name: "title",
     placeholder: "Pic Title"
   }), /*#__PURE__*/React.createElement("label", {
-    htmlFor: "age"
-  }, "Age: "), /*#__PURE__*/React.createElement("input", {
-    id: "picAge",
+    htmlFor: "rating"
+  }, "Rating: "), /*#__PURE__*/React.createElement("input", {
+    id: "picRating",
     type: "text",
-    name: "age",
-    placeholder: "Pic Age"
+    name: "rating",
+    placeholder: "Pic Rating"
   }),/*#__PURE__*/React.createElement("label", {
-    htmlFor: "height"
-  }, "Height: "), /*#__PURE__*/React.createElement("input", {
-    id: "picHeight",
+    htmlFor: "tags"
+  }, "Tags: "), /*#__PURE__*/React.createElement("input", {
+    id: "picTags",
     type: "text",
-    name: "height",
-    placeholder: "Pic Height"
+    name: "tags",
+    placeholder: "Pic Tags"
   }), /*#__PURE__*/React.createElement("input", {
     type: "hidden",
     name: "_csrf",
@@ -128,10 +147,10 @@ var PicList = function PicList(props) {
     }), /*#__PURE__*/React.createElement("h3", {
       className: "picTitle"
     }, " Pic Title: ", pic.title, " "), /*#__PURE__*/React.createElement("h3", {
-      className: "picAge"
-    }, " Age: ", pic.age, " "),/*#__PURE__*/React.createElement("h3", {
-      className: "picHeight"
-    }, " Height: ", pic.height, " "));
+      className: "picRating"
+    }, " Rating: ", pic.rating, " "),/*#__PURE__*/React.createElement("h3", {
+      className: "picTags"
+    }, " Tags: ", pic.tags, " "));
   });
   return /*#__PURE__*/React.createElement("div", {
     className: "picList"

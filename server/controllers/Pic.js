@@ -14,14 +14,14 @@ const makerPage = (req, res) => {
 };
 
 const makePic = (req, res) => {
-  if (!req.body.title || !req.body.age || !req.body.height) {
-    return res.status(400).json({ error: 'Title age and height are required' });
+  if (!req.body.title || !req.body.rating || !req.body.tags) {
+    return res.status(400).json({ error: 'Title rating and tags are required' });
   }
 
   const picData = {
     title: req.body.title,
-    age: req.body.age,
-    height: req.body.height,
+    rating: req.body.rating,
+    tags: req.body.tags,
     owner: req.session.account._id,
   };
 
