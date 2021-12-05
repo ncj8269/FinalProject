@@ -76,29 +76,29 @@ const changePass = (request, response) => {
     }
 
     // change pass here, currently doesnt work
-  
-    const newPassAccountData = {
-      username: req.body.username,
-      salt,
-      password: req.body.newPass,
-    };
 
-    const newPassAccount = new Account.AccountModel(newPassAccountData);
+    // const newPassAccountData = {
+    //   username: req.body.username,
+    //   salt,
+    //   password: req.body.newPass,
+    // };
 
-    const savePromise = newPassAccount.save();
+    // const newPassAccount = new Account.AccountModel(newPassAccountData);
 
-    savePromise.then(() => {
-      req.session.account = Account.AccountModel.toAPI(newPassAccount);
-      return res.json({ redirect: '/maker' });
-    });
+    // const savePromise = newPassAccount.save();
 
-    savePromise.catch((err) => {
-      console.log(err);
+    // savePromise.then(() => {
+    //   req.session.account = Account.AccountModel.toAPI(newPassAccount);
+    //   return res.json({ redirect: '/maker' });
+    // });
 
-      return res.status(400).json({ error: 'An error occurred' });
-    });
+    // savePromise.catch((err) => {
+    //   console.log(err);
 
-    //req.session.account = Account.AccountModel.toAPI(newPassAccountData);
+    //   return res.status(400).json({ error: 'An error occurred' });
+    // });
+
+    // req.session.account = Account.AccountModel.toAPI(newPassAccountData);
 
     return res.json({ redirect: '/maker' });
   });
